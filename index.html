@@ -14,15 +14,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: white; /* Ensures a clean white background */
+            background-color: white; /* Keeps background white */
         }
 
-        /* Container for the invite */
+        /* 60% of screen width, maintaining 7.1" x 5.5" ratio */
         .container {
             position: relative;
-            width: 7.1in;  /* Keeps the background at 7.1" x 5.5" */
-            height: 5.5in;
-            background-color: white; /* Ensures a white border */
+            width: 60vw; /* 60% of the screen width */
+            height: calc(60vw * (5.5 / 7.1)); /* Maintain 7.1" x 5.5" ratio */
+            background-color: white; /* White background */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -30,10 +30,10 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
         }
 
-        /* Envelope & Invitation slightly smaller (~90%) to fit inside */
+        /* Envelope & Invitation are 90% of the container size */
         .envelope, .invitation {
             position: absolute;
-            width: 90%; /* Make them 90% of the container */
+            width: 90%;
             height: 90%;
             background-size: contain;
             background-position: center;
@@ -129,7 +129,7 @@
             const canvas = document.querySelector('.confetti');
             const ctx = canvas.getContext('2d');
 
-            // Ensure confetti is contained within the 7.1" x 5.5" area
+            // Ensure confetti is contained within the 60% screen-sized area
             const container = document.querySelector('.container');
             canvas.width = container.clientWidth * 0.9; // Match 90% width
             canvas.height = container.clientHeight * 0.9; // Match 90% height
