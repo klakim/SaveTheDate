@@ -5,38 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save the Date</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f3f3f3;
+        /* Ensure the entire screen is used */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            background-color: #f3f3f3;
         }
 
         .container {
             position: relative;
-            width: 400px;
-            height: 400px;
+            width: 100vw;
+            height: 100vh;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .envelope {
+        .envelope, .invitation {
             position: absolute;
             width: 100%;
             height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
+        }
+
+        .envelope {
             background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/2.png') no-repeat center/cover;
-            transition: transform 1.5s ease-in-out, opacity 1s ease-in-out;
             z-index: 2;
         }
 
         .invitation {
-            position: absolute;
-            width: 100%;
-            height: 100%;
             background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png') no-repeat center/cover;
             opacity: 0; /* Initially hidden */
-            transition: opacity 1.5s ease-in-out;
             z-index: 1;
         }
 
@@ -47,16 +52,16 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 3; /* Ensures confetti is on top */
+            z-index: 3;
         }
 
-        /* 📨 Envelope slides down fully and disappears */
+        /* 📨 Envelope fully slides down and disappears */
         .container.open .envelope {
-            transform: translateY(100%) scale(0.5);
+            transform: translateY(120%) scale(0.8);
             opacity: 0;
         }
 
-        /* 📜 Invitation fades in */
+        /* 📜 Invitation smoothly fades in */
         .container.open .invitation {
             opacity: 1;
         }
@@ -105,13 +110,13 @@
             canvas.height = window.innerHeight;
 
             let confettiPieces = [];
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 200; i++) {
                 confettiPieces.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
-                    size: Math.random() * 6 + 4,
+                    size: Math.random() * 8 + 4,
                     color: Math.random() > 0.5 ? '#ADD8E6' : '#FFFFFF', /* Light blue and white */
-                    velocityY: Math.random() * 3 + 2
+                    velocityY: Math.random() * 4 + 2
                 });
             }
 
