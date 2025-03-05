@@ -16,7 +16,7 @@
 
         .container {
             position: relative;
-            width: 400px; /* Increased for better visibility */
+            width: 400px;
             height: 400px;
             cursor: pointer;
         }
@@ -25,7 +25,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+            transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
         }
 
         .envelope {
@@ -35,7 +35,7 @@
 
         .invitation {
             background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png') no-repeat center/cover;
-            opacity: 0; /* Initially hidden */
+            opacity: 0;
             z-index: 1;
         }
 
@@ -46,14 +46,16 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 3; /* Ensures confetti is on top */
+            z-index: 3;
         }
 
-        /* Envelope opens and reveals invitation */
+        /* Envelope fully slides down out of view */
         .container.open .envelope {
-            transform: translateY(100px) rotateX(180deg);
+            transform: translateY(250px) rotateX(180deg);
+            opacity: 0;
         }
 
+        /* Invitation appears smoothly */
         .container.open .invitation {
             opacity: 1;
         }
@@ -85,8 +87,13 @@
             // Play music
             music.play();
 
-            // Confetti animation
+            // Start confetti animation ONCE
             startConfetti();
+            
+            // Stop confetti after 3 seconds
+            setTimeout(() => {
+                confettiCanvas.classList.add('hidden');
+            }, 3000);
         }
 
         function startConfetti() {
@@ -118,16 +125,20 @@
             function updateConfetti() {
                 confettiPieces.forEach(p => {
                     p.y += p.velocityY;
-                    if (p.y > canvas.height) p.y = 0;
                 });
             }
 
             function loop() {
                 drawConfetti();
                 updateConfetti();
-                requestAnimationFrame(loop);
+                
+                // Stop confetti animation after 3 seconds
+                if (Date.now() - startTime < 3000) {
+                    requestAnimationFrame(loop);
+                }
             }
 
+            let startTime = Date.now();
             loop();
         }
     </script>
