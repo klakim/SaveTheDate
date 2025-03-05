@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save the Date</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f3f3;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 300px;
+            height: 250px;
+            cursor: pointer;
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/YLVG5M4.png') no-repeat center/cover; /* Dark blue envelope */
+            transition: transform 1s ease-in-out;
+        }
+
+        .invitation {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: auto;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .container.open .envelope {
+            transform: translateY(80px) rotateX(180deg); /* Envelope opens */
+        }
+
+        .container.open .invitation {
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" class="hidden" src="YOUR_MUSIC_URL_HERE"></audio>
+
+    <div class="container" onclick="openEnvelope()">
+        <div class="envelope"></div>
+        <img src="https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png" class="invitation">
+        <canvas class="confetti hidden"></canvas>
+    </div>
+
+    <script>
+        function openEnvelope() {
+            let container = document.querySelector('.container');
+            let confettiCanvas = document.querySelector('.confetti');
+            let music = document.getElementById('bgMusic');
+
+            container.classList.add('open');
+            confettiCanvas.classList.remove('hidden');
+
+            // Play music
+            music.play();
+
+            // Confetti animation
+            startConfetti();
+        }
+
+        function startConfetti() {
+            const canvas = document.querySelector('.confetti');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let confettiPieces = [];
+            for (let i = 0; i < 100; i++) {
+                confettiPieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 6 + 4,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    velocityY: Math.random() * 3 + 2
+                });
+            }
+
+            function drawConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiPieces.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+            }
+
+            function updateConfetti() {
+                confettiPieces.forEach(p => {
+                    p.y += p.velocityY;
+                    if (p.y > canvas.height) p.y = 0;
+                });
+            }
+
+            function loop() {
+                drawConfetti();
+                updateConfetti();
+                requestAnimationFrame(loop);
+            }
+
+            loop();
+        }
+    </script>
+
+</body>
+</html>
