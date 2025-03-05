@@ -21,21 +21,22 @@
             cursor: pointer;
         }
 
-        .envelope, .invitation {
+        .envelope {
             position: absolute;
             width: 100%;
             height: 100%;
-            transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
-        }
-
-        .envelope {
             background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/2.png') no-repeat center/cover;
+            transition: transform 1.5s ease-in-out, opacity 1s ease-in-out;
             z-index: 2;
         }
 
         .invitation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png') no-repeat center/cover;
-            opacity: 0;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 1.5s ease-in-out;
             z-index: 1;
         }
 
@@ -46,16 +47,16 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 3;
+            z-index: 3; /* Ensures confetti is on top */
         }
 
-        /* Envelope fully slides down out of view */
+        /* 📨 Envelope slides down fully and disappears */
         .container.open .envelope {
-            transform: translateY(250px) rotateX(180deg);
+            transform: translateY(100%) scale(0.5);
             opacity: 0;
         }
 
-        /* Invitation appears smoothly */
+        /* 📜 Invitation fades in */
         .container.open .invitation {
             opacity: 1;
         }
@@ -89,7 +90,7 @@
 
             // Start confetti animation ONCE
             startConfetti();
-            
+
             // Stop confetti after 3 seconds
             setTimeout(() => {
                 confettiCanvas.classList.add('hidden');
@@ -131,13 +132,12 @@
             function loop() {
                 drawConfetti();
                 updateConfetti();
-                
+
                 // Stop confetti animation after 3 seconds
                 if (Date.now() - startTime < 3000) {
                     requestAnimationFrame(loop);
                 }
             }
-            //test
 
             let startTime = Date.now();
             loop();
