@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save the Date</title>
     <style>
-        /* Ensure the entire screen is used */
+        /* Full-screen layout */
         body, html {
             margin: 0;
             padding: 0;
@@ -55,13 +55,13 @@
             z-index: 3;
         }
 
-        /* 📨 Envelope fully slides down and disappears */
+        /* Envelope slides down fully and disappears */
         .container.open .envelope {
             transform: translateY(120%) scale(0.8);
             opacity: 0;
         }
 
-        /* 📜 Invitation smoothly fades in */
+        /* Invitation fades in smoothly */
         .container.open .invitation {
             opacity: 1;
         }
@@ -73,7 +73,7 @@
 </head>
 <body>
 
-    <audio id="bgMusic" class="hidden" src="https://raw.githubusercontent.com/klakim/SaveTheDate/main/AtLast.mp3"></audio>
+    <audio id="bgMusic" class="hidden" src="YOUR_MP3_FILE_URL_HERE"></audio>
 
     <div class="container" onclick="openEnvelope()">
         <div class="envelope"></div>
@@ -90,8 +90,22 @@
             container.classList.add('open');
             confettiCanvas.classList.remove('hidden');
 
-            // Play music
+            // Play music from 10 seconds
+            music.currentTime = 10;
+            music.volume = 1; // Full volume
             music.play();
+
+            // Gradually fade out music before stopping at 35 seconds
+            setTimeout(() => {
+                let fadeOut = setInterval(() => {
+                    if (music.volume > 0.05) {
+                        music.volume -= 0.05; // Reduce volume step by step
+                    } else {
+                        clearInterval(fadeOut);
+                        music.pause(); // Stop the music
+                    }
+                }, 200);
+            }, 20000); // Start fade-out at 20 seconds (so it ends at 35s)
 
             // Start confetti animation ONCE
             startConfetti();
