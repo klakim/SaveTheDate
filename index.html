@@ -14,23 +14,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: white; /* Keeps background white */
+            background-color: white;
         }
 
         /* 60% of screen width, maintaining 7.1" x 5.5" ratio */
         .container {
             position: relative;
-            width: 60vw; /* 60% of the screen width */
-            height: calc(60vw * (5.5 / 7.1)); /* Maintain 7.1" x 5.5" ratio */
-            background-color: white; /* White background */
+            width: 60vw;
+            height: calc(60vw * (5.5 / 7.1));
+            background-color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
-        /* Envelope & Invitation are 90% of the container size */
+        /* Envelope & Invitation (90% of container) */
         .envelope, .invitation {
             position: absolute;
             width: 90%;
@@ -48,7 +49,7 @@
 
         .invitation {
             background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png') no-repeat center/contain;
-            opacity: 0; /* Initially hidden */
+            opacity: 0;
             z-index: 1;
         }
 
@@ -62,13 +63,13 @@
             z-index: 3;
         }
 
-        /* Envelope smoothly slides down & disappears */
+        /* Envelope slides down and disappears */
         .container.open .envelope {
             transform: translateY(150%) scale(0.8);
             opacity: 0;
         }
 
-        /* Invitation smoothly fades in */
+        /* Invitation fades in */
         .container.open .invitation {
             opacity: 1;
         }
@@ -81,7 +82,7 @@
 <body>
 
     <audio id="bgMusic" class="hidden" preload="auto">
-        <source src="https://raw.githubusercontent.com/klakim/SaveTheDate/main/AtLast.mp3" type="audio/mpeg">
+        <source src="https://drive.google.com/file/d/1tJdHkw0FJn6Iz_-1wAkdDgrD4iBr_jcB/view?usp=drive_link" type="audio/mpeg">
     </audio>
 
     <div class="container" onclick="openEnvelope()">
@@ -99,24 +100,35 @@
             container.classList.add('open');
             confettiCanvas.classList.remove('hidden');
 
-            // Ensure music starts at 10 seconds and plays
-            music.currentTime = 10;
-            music.volume = 1; // Start at full volume
-            music.play();
+            // Play music only after user interaction (fixes autoplay issues)
+            music.play().then(() => {
+                music.muted = false; // Unmute if needed
+                music.volume = 1;
 
-            // Gradually fade out music and stop at 35 seconds
-            setTimeout(() => {
-                let fadeOut = setInterval(() => {
-                    if (music.volume > 0.05) {
-                        music.volume -= 0.05; // Reduce volume gradually
-                    } else {
-                        clearInterval(fadeOut);
-                        music.pause(); // Stop the music
-                    }
-                }, 200);
-            }, 20000); // Start fading out at 20 seconds
+                // Ensure seeking only happens after metadata is loaded
+                if (music.readyState >= 2) {
+                    music.currentTime = 10;
+                } else {
+                    music.addEventListener("loadedmetadata", () => {
+                        music.currentTime = 10;
+                    });
+                }
 
-            // Start confetti animation ONCE
+                // Gradually fade out music and stop at 35 seconds
+                setTimeout(() => {
+                    let fadeOut = setInterval(() => {
+                        if (music.volume > 0.05) {
+                            music.volume -= 0.05;
+                        } else {
+                            clearInterval(fadeOut);
+                            music.pause();
+                        }
+                    }, 200);
+                }, 20000); // Start fading out at 20 seconds
+
+            }).catch(error => console.log("Autoplay blocked:", error));
+
+            // Start confetti animation
             startConfetti();
 
             // Stop confetti after 3 seconds
@@ -129,10 +141,9 @@
             const canvas = document.querySelector('.confetti');
             const ctx = canvas.getContext('2d');
 
-            // Ensure confetti is contained within the 60% screen-sized area
             const container = document.querySelector('.container');
-            canvas.width = container.clientWidth * 0.9; // Match 90% width
-            canvas.height = container.clientHeight * 0.9; // Match 90% height
+            canvas.width = container.clientWidth * 0.9;
+            canvas.height = container.clientHeight * 0.9;
 
             let confettiPieces = [];
             for (let i = 0; i < 200; i++) {
@@ -140,7 +151,7 @@
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
                     size: Math.random() * 8 + 4,
-                    color: Math.random() > 0.5 ? '#ADD8E6' : '#FFFFFF', /* Light blue and white */
+                    color: Math.random() > 0.5 ? '#ADD8E6' : '#FFFFFF',
                     velocityY: Math.random() * 4 + 2
                 });
             }
@@ -163,7 +174,6 @@
                 drawConfetti();
                 updateConfetti();
 
-                // Stop confetti animation after 3 seconds
                 if (Date.now() - startTime < 3000) {
                     requestAnimationFrame(loop);
                 }
