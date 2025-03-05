@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save the Date</title>
     <style>
-        /* Center everything on the page */
+        /* Full-page white background */
         body, html {
             margin: 0;
             padding: 0;
@@ -14,21 +14,27 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f3f3f3;
+            background-color: white; /* Ensures a clean white background */
         }
 
-        /* Container for the envelope & invitation */
+        /* Container for the invite */
         .container {
             position: relative;
-            width: 7.1in;  /* Set width to 7.1 inches */
-            height: 5.5in; /* Set height to 5.5 inches */
-            cursor: pointer;
+            width: 7.1in;  /* Keeps the background at 7.1" x 5.5" */
+            height: 5.5in;
+            background-color: white; /* Ensures a white border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
         }
 
+        /* Envelope & Invitation slightly smaller (~90%) to fit inside */
         .envelope, .invitation {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 90%; /* Make them 90% of the container */
+            height: 90%;
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
@@ -48,21 +54,21 @@
 
         .confetti {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
             pointer-events: none;
             z-index: 3;
         }
 
-        /* 📨 Envelope slides down and disappears */
+        /* Envelope smoothly slides down & disappears */
         .container.open .envelope {
             transform: translateY(150%) scale(0.8);
             opacity: 0;
         }
 
-        /* 📜 Invitation fades in smoothly */
+        /* Invitation smoothly fades in */
         .container.open .invitation {
             opacity: 1;
         }
@@ -74,7 +80,9 @@
 </head>
 <body>
 
-    <audio id="bgMusic" class="hidden" src="YOUR_MP3_FILE_URL_HERE"></audio>
+    <audio id="bgMusic" class="hidden" preload="auto">
+        <source src="YOUR_MP3_FILE_URL_HERE" type="audio/mpeg">
+    </audio>
 
     <div class="container" onclick="openEnvelope()">
         <div class="envelope"></div>
@@ -91,22 +99,22 @@
             container.classList.add('open');
             confettiCanvas.classList.remove('hidden');
 
-            // Play music from 10 seconds
+            // Ensure music starts at 10 seconds and plays
             music.currentTime = 10;
-            music.volume = 1; // Full volume
+            music.volume = 1; // Start at full volume
             music.play();
 
-            // Gradually fade out music before stopping at 35 seconds
+            // Gradually fade out music and stop at 35 seconds
             setTimeout(() => {
                 let fadeOut = setInterval(() => {
                     if (music.volume > 0.05) {
-                        music.volume -= 0.05; // Reduce volume step by step
+                        music.volume -= 0.05; // Reduce volume gradually
                     } else {
                         clearInterval(fadeOut);
                         music.pause(); // Stop the music
                     }
                 }, 200);
-            }, 20000); // Start fade-out at 20 seconds (so it ends at 35s)
+            }, 20000); // Start fading out at 20 seconds
 
             // Start confetti animation ONCE
             startConfetti();
@@ -121,8 +129,10 @@
             const canvas = document.querySelector('.confetti');
             const ctx = canvas.getContext('2d');
 
-            canvas.width = document.querySelector('.container').offsetWidth;
-            canvas.height = document.querySelector('.container').offsetHeight;
+            // Ensure confetti is contained within the 7.1" x 5.5" area
+            const container = document.querySelector('.container');
+            canvas.width = container.clientWidth * 0.9; // Match 90% width
+            canvas.height = container.clientHeight * 0.9; // Match 90% height
 
             let confettiPieces = [];
             for (let i = 0; i < 200; i++) {
