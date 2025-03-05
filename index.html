@@ -100,21 +100,13 @@
             container.classList.add('open');
             confettiCanvas.classList.remove('hidden');
 
-            // Play music only after user interaction (fixes autoplay issues)
-            music.play().then(() => {
-                music.muted = false; // Unmute if needed
+            // Ensure metadata is loaded before setting currentTime
+            let playMusic = () => {
+                music.currentTime = 10;
                 music.volume = 1;
+                music.play().catch(error => console.log("Autoplay blocked:", error));
 
-                // Ensure seeking only happens after metadata is loaded
-                if (music.readyState >= 2) {
-                    music.currentTime = 10;
-                } else {
-                    music.addEventListener("loadedmetadata", () => {
-                        music.currentTime = 10;
-                    });
-                }
-
-                // Gradually fade out music and stop at 35 seconds
+                // Gradually fade out music before stopping at 35 seconds
                 setTimeout(() => {
                     let fadeOut = setInterval(() => {
                         if (music.volume > 0.05) {
@@ -125,8 +117,14 @@
                         }
                     }, 200);
                 }, 20000); // Start fading out at 20 seconds
+            };
 
-            }).catch(error => console.log("Autoplay blocked:", error));
+            // If metadata is already loaded, play immediately
+            if (music.readyState >= 2) {
+                playMusic();
+            } else {
+                music.addEventListener("loadedmetadata", playMusic);
+            }
 
             // Start confetti animation
             startConfetti();
