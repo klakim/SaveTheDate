@@ -5,71 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save the Date</title>
     <style>
-        /* Full-page white background */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: white;
+            height: 100vh;
+            background-color: #f3f3f3;
+            overflow: hidden;
         }
 
-        /* 60% of screen width, maintaining 7.1" x 5.5" ratio */
         .container {
             position: relative;
-            width: 60vw;
-            height: calc(60vw * (5.5 / 7.1));
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            height: 400px;
             cursor: pointer;
         }
 
-        /* Envelope & Invitation (90% of container) */
-        .envelope, .invitation {
-            position: absolute;
-            width: 90%;
-            height: 90%;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
-        }
-
         .envelope {
-            background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/2.png') no-repeat center/contain;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/2.png') no-repeat center/cover;
+            transition: transform 1.5s ease-in-out, opacity 1s ease-in-out;
             z-index: 2;
         }
 
         .invitation {
-            background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png') no-repeat center/contain;
-            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png') no-repeat center/cover;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 1.5s ease-in-out;
             z-index: 1;
         }
 
         .confetti {
             position: absolute;
-            top: 5%;
-            left: 5%;
-            width: 90%;
-            height: 90%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: 3;
+            z-index: 3; /* Ensures confetti is on top */
         }
 
-        /* Envelope slides down and disappears */
+        /* 📨 Envelope slides down fully and disappears */
         .container.open .envelope {
-            transform: translateY(150%) scale(0.8);
+            transform: translateY(100%) scale(0.5);
             opacity: 0;
         }
 
-        /* Invitation fades in */
+        /* 📜 Invitation fades in */
         .container.open .invitation {
             opacity: 1;
         }
@@ -81,9 +68,7 @@
 </head>
 <body>
 
-    <audio id="bgMusic" class="hidden" preload="auto">
-        <source src="https://raw.githubusercontent.com/klakim/SaveTheDate/main/AtLast.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgMusic" class="hidden" src="https://docs.google.com/uc?export=download&id=1tJdHkw0FJn6Iz_-1wAkdDgrD4iBr_jc"></audio>
 
     <div class="container" onclick="openEnvelope()">
         <div class="envelope"></div>
@@ -100,24 +85,10 @@
             container.classList.add('open');
             confettiCanvas.classList.remove('hidden');
 
-            // ✅ Your preferred music logic
-            music.currentTime = 10;
-            music.volume = 1; // Start at full volume
+            // Play music
             music.play();
 
-            // Gradually fade out music and stop at 35 seconds
-            setTimeout(() => {
-                let fadeOut = setInterval(() => {
-                    if (music.volume > 0.05) {
-                        music.volume -= 0.05; // Reduce volume gradually
-                    } else {
-                        clearInterval(fadeOut);
-                        music.pause(); // Stop the music
-                    }
-                }, 200);
-            }, 20000); // Start fading out at 20 seconds
-
-            // Start confetti animation
+            // Start confetti animation ONCE
             startConfetti();
 
             // Stop confetti after 3 seconds
@@ -130,18 +101,17 @@
             const canvas = document.querySelector('.confetti');
             const ctx = canvas.getContext('2d');
 
-            const container = document.querySelector('.container');
-            canvas.width = container.clientWidth * 0.9;
-            canvas.height = container.clientHeight * 0.9;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
             let confettiPieces = [];
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 150; i++) {
                 confettiPieces.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
-                    size: Math.random() * 8 + 4,
-                    color: Math.random() > 0.5 ? '#ADD8E6' : '#FFFFFF',
-                    velocityY: Math.random() * 4 + 2
+                    size: Math.random() * 6 + 4,
+                    color: Math.random() > 0.5 ? '#ADD8E6' : '#FFFFFF', /* Light blue and white */
+                    velocityY: Math.random() * 3 + 2
                 });
             }
 
@@ -163,6 +133,7 @@
                 drawConfetti();
                 updateConfetti();
 
+                // Stop confetti animation after 3 seconds
                 if (Date.now() - startTime < 3000) {
                     requestAnimationFrame(loop);
                 }
