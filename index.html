@@ -16,41 +16,42 @@
 
         .container {
             position: relative;
-            width: 300px;
-            height: 250px;
+            width: 400px; /* Increased for better visibility */
+            height: 400px;
             cursor: pointer;
         }
 
-        .envelope {
+        .envelope, .invitation {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: url('https://i.imgur.com/YLVG5M4.png') no-repeat center/cover; /* Dark blue envelope */
-            transition: transform 1s ease-in-out;
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+        }
+
+        .envelope {
+            background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/2.png') no-repeat center/cover;
+            z-index: 2;
         }
 
         .invitation {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            height: auto;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
+            background: url('https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png') no-repeat center/cover;
+            opacity: 0; /* Initially hidden */
+            z-index: 1;
         }
 
         .confetti {
             position: absolute;
             top: 0;
-            left: 50%;
+            left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
+            z-index: 3; /* Ensures confetti is on top */
         }
 
+        /* Envelope opens and reveals invitation */
         .container.open .envelope {
-            transform: translateY(80px) rotateX(180deg); /* Envelope opens */
+            transform: translateY(100px) rotateX(180deg);
         }
 
         .container.open .invitation {
@@ -68,7 +69,7 @@
 
     <div class="container" onclick="openEnvelope()">
         <div class="envelope"></div>
-        <img src="https://raw.githubusercontent.com/klakim/SaveTheDate/main/1.png" class="invitation">
+        <div class="invitation"></div>
         <canvas class="confetti hidden"></canvas>
     </div>
 
@@ -96,12 +97,12 @@
             canvas.height = window.innerHeight;
 
             let confettiPieces = [];
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 150; i++) {
                 confettiPieces.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
                     size: Math.random() * 6 + 4,
-                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    color: Math.random() > 0.5 ? '#ADD8E6' : '#FFFFFF', /* Light blue and white */
                     velocityY: Math.random() * 3 + 2
                 });
             }
